@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prom?</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ffe4f0 0%, #ffd6e7 50%, #ffcce3 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Georgia', serif;
+      overflow: hidden;
+    }
+
+    /* ── Ask screen ── */
+    #ask-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      padding: 32px 24px;
+      text-align: center;
+      max-width: 480px;
+      width: 100%;
+    }
+
+    #ask-screen .photo-wrapper {
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 380px;
+    }
+
+    #ask-screen .photo-wrapper img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    #ask-screen h1 {
+      font-size: 1.55rem;
+      color: #c0245a;
+      line-height: 1.4;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .btn-yes {
+      background: #e8175d;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 36px;
+      font-size: 1.1rem;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(232, 23, 93, 0.45);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-yes:hover {
+      transform: scale(1.07);
+      box-shadow: 0 6px 20px rgba(232, 23, 93, 0.55);
+    }
+
+    .btn-no {
+      background: #fff;
+      color: #c0245a;
+      border: 2px solid #e8175d;
+      border-radius: 50px;
+      padding: 14px 36px;
+      font-size: 1.1rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    /* ── Celebration screen ── */
+    #celebration-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      text-align: center;
+      padding: 40px 24px;
+    }
+
+    #celebration-screen h1 {
+      font-size: 2.4rem;
+      color: #c0245a;
+    }
+
+    #celebration-screen p {
+      font-size: 1.2rem;
+      color: #7a1035;
+    }
+
+    .hearts {
+      font-size: 3rem;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to   { transform: scale(1.15); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ask screen -->
+  <div id="ask-screen">
+    <div class="photo-wrapper">
+      <img src="photo.jpg" alt="Us" />
+    </div>
+
+    <h1>my jaw would be on the floor if you went to prom with me 🥺</h1>
+
+    <div class="btn-row" id="btn-row">
+      <button class="btn-yes" id="yes-btn" onclick="sayYes()">Yes! 🎉</button>
+      <button class="btn-no"  id="no-btn"  onclick="pressedNo()">No</button>
+    </div>
+  </div>
+
+  <!-- Celebration screen -->
+  <div id="celebration-screen">
+    <div class="hearts">💕💃🕺💕</div>
+    <h1>YAY!! 🎉</h1>
+    <p>This is going to be the best prom ever!</p>
+    <div class="hearts">🌸✨🌸✨🌸</div>
+  </div>
+
+  <script>
+    let noCount = 0;
+    let yesSize = 1;
+
+    function pressedNo() {
+      noCount++;
+
+      // Every other "No" click: grow the Yes button; otherwise spawn a new Yes button
+      if (noCount % 2 === 1) {
+        yesSize += 0.3;
+        const yes = document.getElementById('yes-btn');
+        yes.style.transform = `scale(${yesSize})`;
+        yes.style.margin = `${(yesSize - 1) * 20}px`;
+      } else {
+        const row = document.getElementById('btn-row');
+        const newYes = document.createElement('button');
+        newYes.className = 'btn-yes';
+        newYes.textContent = 'Yes! 🎉';
+        newYes.onclick = sayYes;
+        row.insertBefore(newYes, document.getElementById('no-btn'));
+      }
+
+      // Shrink the No button a little each time so it's harder to hit
+      const no = document.getElementById('no-btn');
+      const currentSize = parseFloat(no.style.fontSize) || 17.6;
+      no.style.fontSize = Math.max(currentSize - 2, 6) + 'px';
+      no.style.padding = '10px 20px';
+    }
+
+    function sayYes() {
+      document.getElementById('ask-screen').style.display = 'none';
+      const cel = document.getElementById('celebration-screen');
+      cel.style.display = 'flex';
+
+      // Fire confetti
+      const duration = 5000;
+      const end = Date.now() + duration;
+
+      (function frame() {
+        confetti({
+          particleCount: 6,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: ['#e8175d', '#ffb3d1', '#fff', '#ff6699']
+        });
+        confetti({
+          particleCount: 6,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: ['#e8175d', '#ffb3d1', '#fff', '#ff6699']
+        });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
+    }
+  </script>
+</body>
+</html>
